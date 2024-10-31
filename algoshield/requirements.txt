@@ -1,0 +1,5 @@
+Django==5.1.2
+py-algorand-sdk==2.6.1
+pyteal==0.26.1
+algopy==0.7.2
+djangorestframework==3.15.2
