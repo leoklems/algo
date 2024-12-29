@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Customer</title>
+</head>
+<body>
+    <h1>Create Customer</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <h2>User Information</h2>
+        <label for="username">Username:</label>
+        <input type="text" name="username" required>
+
+        <label for="email">Email:</label>
+        <input type="email" name="email" required>
+        
+        <label for="password">Password:</label>
+        <input type="password" name="password" required>
+        
+        <h2>Customer Information</h2>
+        {{ customer_form.as_p }}
+        
+        <button type="submit">Create Customer</button>
+    </form>
+</body>
+</html>

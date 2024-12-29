@@ -27,3 +27,5 @@ django-cors-headers==4.6.0
 axios==0.4.0
 gunicorn==23.0.0 
 whitenoise==6.8.1
+beaker-pyteal==1.1.1
+

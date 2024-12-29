@@ -103,6 +103,11 @@ def _indexer_client():
     indexer_token = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
     return indexer.IndexerClient(indexer_token, indexer_address)
 
+def validate_mnemonic(mnemonic_phrase):
+    words = mnemonic_phrase.split()
+    if len(words) != 25:
+        raise ValueError("Invalid mnemonic length. Mnemonic must consist of 25 words.")
+
 
 def initial_funds_sender():
     """Get the address of initially created account having enough funds."""
@@ -165,3 +170,45 @@ def add_transaction(sender, receiver, passphrase, amount, note):
     except Exception as err:
         return None, err  # None implies non-field error
     return "", ""
+
+
+
+def send_algos(sender, receiver, passphrase, amount, note):
+    """Create and sign transaction from provided argument to send algos."""
+
+    client = _algod_client()
+    params = client.suggested_params()
+    try:
+        print(amount)
+        unsigned_txn = PaymentTxn(
+            sender=sender, 
+            sp=params, 
+            receiver = receiver, 
+            amt = amount, 
+            note = note.encode()
+        )
+        print("unsigned done")
+    except Exception as e:
+        print("error", e)
+        return None, err  # None implies non-field error
+    
+    try:
+        print("started signing")
+        signed_txn = unsigned_txn.sign(
+            mnemonic.to_private_key(passphrase))
+        print("finished signing")
+    except Exception as e:
+        print("error", e)
+        return None, e  # None implies non-field error
+
+    try:
+        print("started waiting")
+        transaction_id = client.send_transaction(signed_txn)
+        # wait for confirmation
+        # txn_result = transaction.wait_for_confirmation(algod_client, txid, 4)
+        _wait_for_confirmation(client, transaction_id, 4)
+        print("finished waiting")
+    except Exception as e:
+        print("error", e)
+        return None, e  # None implies non-field error
+    return f"{amount} sent to {receiver}"
